@@ -38,7 +38,7 @@ Markdown
 
 | **Loading Screen** | **Terminal / Backend** |
 |:---:|:---:|
-| ![Loading](Screenshot/Loading-screen.png) | ![Terminal](Screenshot/Termianl.png) |
+| ![Loading](Screenshot/Loading-screen.png) | ![Terminal](Screenshot/Termanil.png) |
 
 ---
 
@@ -145,3 +145,4 @@ UI/UX Design: HTML5, CSS3 (Glassmorphism/Matte), Vanilla JS
 Database: SQLite3
 
 © 2025 Kashayap Gajjar. All Rights Reserved.
+
