@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Music</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='ui-premium.css') }}">
+</head>
+
+<body>
+    <div id="k-splash-screen">
+        <div class="nexus-loader">
+            <div class="ring one"></div>
+            <div class="ring two"></div>
+            <div class="ring three"></div>
+            <div class="ring four"></div>
+            <div class="core"></div>
+        </div>
+        <h1 class="splash-title">NEXUS AUDIO</h1>
+        <div class="splash-credit">SYSTEM STARTUP | KASHAYAP GAJJAR</div>
+    </div>
+
+    <audio id="rainAudio" src="https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg" loop
+        crossorigin="anonymous"></audio>
+
+    <nav class="top-nav">
+        <div class="logo">
+            <button class="icon-btn" onclick="toggleSidebar()" style="margin-right:10px; font-size:20px;"><i
+                    class="fas fa-bars"></i></button>
+            <i class="fas fa-play-circle" style="color: #fff; font-size: 32px;"></i>
+            <span>Music</span>
+        </div>
+
+        <div class="nav-pills">
+            <button class="pill active" onclick="showSection('home')">Home</button>
+            <button class="pill" onclick="showSection('explore')">Explore</button>
+            <button class="pill" onclick="showSection('library')">Library</button>
+            <button class="pill icon-only" onclick="openTimerModal()" title="Sleep Timer"><i
+                    class="fas fa-moon"></i></button>
+            <button class="pill icon-only" onclick="toggleMapPicker()" title="Global Map"><i
+                    class="fas fa-globe"></i></button>
+        </div>
+
+        <div class="search-wrapper">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search songs, artists..."
+                    onkeypress="if(event.key==='Enter') performSearch(this.value)">
+                <button class="search-btn" onclick="performSearch(document.getElementById('searchInput').value)">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <button class="mic-btn" title="Voice Search"><i class="fas fa-microphone"></i></button>
+        </div>
+    </nav>
+
+    <!-- SLIDING SIDEBAR -->
+    <div id="sideDrawer" class="side-drawer">
+        <div class="drawer-header">
+            <h3>Playlists</h3>
+            <button onclick="toggleSidebar()" class="btn-close"><i class="fas fa-times"></i></button>
+        </div>
+        <button class="btn-create-pl" onclick="createNewPlaylistUI()">+ New Playlist</button>
+        <ul id="sidebarPlaylists" class="drawer-list">
+            <!-- Populated by JS -->
+        </ul>
+    </div>
+    <div id="drawerBackdrop" class="drawer-backdrop" onclick="toggleSidebar()"></div>
+
+    <main id="mainContent">
+
+        <div id="recommendationSection" class="section hidden">
+            <div class="section-header">
+                <h2>Up Next</h2>
+                <span>Based on your listening</span>
+            </div>
+            <div class="horizontal-scroll" id="recRow">
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2 id="sectionTitle">Search Results</h2>
+        </div>
+        <div id="resultsArea" class="grid-layout">
+            <div class="welcome-placeholder">
+                <i class="fas fa-music"></i>
+                <p>Start searching to play music</p>
+            </div>
+        </div>
+
+        <div style="height: 120px;"></div>
+    </main>
+
+    <footer class="yt-player">
+        <canvas id="visualizer"></canvas>
+
+        <div class="progress-strip" id="progressContainer">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div class="player-left">
+            <div class="control-buttons">
+                <button onclick="playPrev()"><i class="fas fa-step-backward"></i></button>
+                <button onclick="togglePlay()" class="play-btn"><i class="fas fa-play" id="playIcon"></i></button>
+                <button onclick="playNext()"><i class="fas fa-step-forward"></i></button>
+            </div>
+            <img id="npImg" src="/static/default.jpg" onerror="this.src='/static/default.jpg'">
+            <div class="info-text">
+                <div id="npTitle">Not Playing</div>
+                <div id="npArtist">...</div>
+            </div>
+        </div>
+
+        <div class="player-center">
+            <!-- Removed center controls -->
+        </div>
+
+        <div class="player-right">
+            <button class="icon-btn premium-btn" onclick="toggleTheme()" title="Change Theme">
+                <i class="fas fa-palette"></i>
+            </button>
+            <button class="icon-btn premium-btn" onclick="toggleFullScreenVisualizer()" title="Zen Mode">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button class="icon-btn premium-btn" onclick="toggleRain()" id="btnRain" title="Lo-Fi Rain">
+                <i class="fas fa-cloud-showers-heavy"></i>
+            </button>
+            <button class="icon-btn premium-btn" onclick="toggleBass()" id="btnBass" title="Bass Boost">
+                <i class="fas fa-bolt"></i>
+            </button>
+        </div>
+    </footer>
+
+    <div id="playlistModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Add to Playlist</h3>
+            <div id="modalList" class="modal-list"></div>
+            <div class="modal-actions">
+                <button onclick="closeModal()" class="btn-cancel">Cancel</button>
+                <button onclick="createNewPlaylistUI()" class="btn-create">New Playlist</button>
+                <div id="timerModal" class="modal-overlay" style="display: none;">
+                    <div class="modal-content">
+                        <h3>Sleep Timer</h3>
+                        <div class="timer-values">
+                            <button class="pill" onclick="setSleepTimer(10)">10 min</button>
+                            <button class="pill" onclick="setSleepTimer(30)">30 min</button>
+                            <button class="pill" onclick="setSleepTimer(60)">1 Hour</button>
+                            <button class="pill" onclick="setSleepTimer(0)"
+                                style="background:#444; color:#aaa;">Off</button>
+                        </div>
+                        <br>
+                        <button onclick="closeTimerModal()" class="btn-cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <audio id="audioPlayer" crossorigin="anonymous" ontimeupdate="updateProgress()" onended="audioEnded()"></audio>
+        <div id="toast-container"></div>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
