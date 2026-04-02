@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+npm-debug.log*
+backend/data/*.txt
+backend/data/*.json
+.DS_Store
+*.local
+backend/logs/
