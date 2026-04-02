@@ -17,7 +17,7 @@ export function LoginPage({ onSubmit }) {
     <main className="flex min-h-screen items-center justify-center px-6 py-10">
       <div className="grid w-full max-w-5xl gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <section className="rounded-[2.4rem] border border-white/10 bg-slate-950/35 p-8 shadow-[0_28px_90px_rgba(15,23,42,0.4)] backdrop-blur-xl md:p-10">
-          <div className="text-sm uppercase tracking-[0.4em] text-orange-300">SoundBound</div>
+          <div className="text-sm uppercase tracking-[0.4em] text-orange-300">Omstream</div>
           <h1 className="mt-5 max-w-xl text-4xl font-semibold leading-tight text-stone-100 md:text-6xl">
             Search fast.
             <br />

@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo   SoundBound - Auto Start
+echo   Omstream - Auto Start
 echo ========================================
 echo.
 
@@ -8,18 +8,18 @@ echo.
 echo [1/3] Cleaning up old processes...
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3001 ^| findstr LISTENING') do taskkill /PID %%a /F >nul 2>&1
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5173 ^| findstr LISTENING') do taskkill /PID %%a /F >nul 2>&1
-timeout /t 1 /nobreak >nul
+timeout /t /nobreak 1 >nul 2>&1
 
 :: Start backend
 echo [2/3] Starting backend on port 3001...
-start "SoundBound Backend" cmd /k "cd /d %~dp0backend && npm run dev"
+start "Omstream Backend" cmd /k "cd /d %~dp0backend && npm run dev"
 
 :: Wait for backend to boot
-timeout /t 3 /nobreak >nul
+timeout /t /nobreak 3 >nul 2>&1
 
 :: Start frontend
 echo [3/3] Starting frontend on port 5173...
-start "SoundBound Frontend" cmd /k "cd /d %~dp0frontend && npm run dev"
+start "Omstream Frontend" cmd /k "cd /d %~dp0frontend && npm run dev"
 
 echo.
 echo ========================================
