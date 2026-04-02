@@ -11,36 +11,69 @@
 
 ---
 
-## 🛠️ Performance Architecture
+## 🛠️ Technical Architecture
 
-Omstream is built for speed and stability. The system utilizes a decoupled adapter architecture and a high-speed proxy engine to ensure seamless streaming.
+### 1. System Data Flow
+How a user search request is processed and served through the aggregation engine.
 
 ```mermaid
 graph TD
-    A[User UI - Vite/React] -->|Search/Stream| B[Express Gateway]
-    B --> C{Search Cache}
-    C -->|Hit| D[Instant Results]
-    C -->|Miss| E[Adapter System]
-    E --> F[Spotify]
-    E --> G[YouTube Music]
-    E --> H[JioSaavn]
-    F & G & H -->|Results| B
-    B -->|Stream Proxy| I[Native Audio Stream]
+    User((User)) -->|Search Query| UI[React Frontend]
+    UI -->|API Request| API[Express API Gateway]
+    API --> Cache{Search Cache}
+    
+    Cache -->|Hit| Instant[Serve 1ms Results]
+    Cache -->|Miss| Dispatch[Multi-Adapter Dispatcher]
+    
+    Dispatch --> Spotify[Spotify Adapter]
+    Dispatch --> YT[YouTube Music Adapter]
+    Dispatch --> Saavn[JioSaavn Adapter]
+    
+    Spotify & YT & Saavn -->|JSON Meta| Aggregator[Result Aggregator]
+    Aggregator -->|Normalize| API
+    API -->|Optimized JSON| UI
 ```
 
-### **Core Components**
-- **⚡ Velocity Search Caching:** Intelligent in-memory backend cache reducing repeat search latencies from 8 seconds to **1ms**.
-- **🎧 High-Fidelity Extraction:** Utilizes advanced `yt-dlp` piping with native Node.js JS-runtime solving to unblock Premium 256kbps AAC audio streams.
-- **🔐 Secure Account Automation:** Seamless Puppeteer-automated authentication for Spotify and YouTube Music, bypassing browser security blocks.
+### 2. High-Fidelity Streaming Pipeline
+Technique used to bypass provider restrictions and pipe high-quality audio directly to the user.
+
+```mermaid
+sequenceDiagram
+    participant U as User Browser
+    participant P as Omstream Proxy
+    participant E as Provider Endpoint (YT/Spotify)
+    participant D as yt-dlp Engine
+
+    U->>P: Request Stream (track_id)
+    P->>D: Extract Direct URL (AAC/MP3)
+    D-->>P: Return Signed URL
+    P->>E: HTTP GET (Range: bytes=0-)
+    E-->>P: 206 Partial Content (Audio Stream)
+    P-->>U: Pipe Audio Buffer (0ms Delay)
+```
+
+### 3. Source Resolution & Fallback
+The logic behind selecting the "best" playback source for a given track.
+
+```mermaid
+graph LR
+    A[Track Request] --> B{Spotify Match?}
+    B -->|Yes| C[High Quality Source]
+    B -->|No| D{YT Music Match?}
+    D -->|Yes| E[Medium Quality Source]
+    D -->|No| F{Saavn Match?}
+    F -->|Yes| G[Fallback Source]
+    F -->|No| H[Error: Track Not Found]
+```
 
 ---
 
 ## ✨ Key Features
 
-- **📐 Golden Ratio Foundation:** Every component, from the 38/62 split sidebar to the modular typography scale, is derived from the $\phi$ sequence for maximum visual harmony.
-- **🔄 Universal Fallback Engine:** Smart resolution logic that automatically switches between providers to ensure your song always plays, even if one source is restricted.
-- **📱 Responsive Player:** Custom HTML5 audio implementation with real-time buffering, seeking, and loading visualizations.
-- **🎨 Glassmorphic UI:** Modern, immersive interface with subtle micro-animations and premium dark-mode aesthetics.
+- **📐 Golden Ratio Foundation:** UI spacing and typography derived from the $\phi$ sequence ($1.618$) for maximum visual harmony.
+- **⚡ Velocity Search Caching:** Intelligent in-memory backend cache reducing repeat search latencies from 8 seconds to **1ms**.
+- **🎧 High-Fidelity Extraction:** Utilizes advanced `yt-dlp` piping to unblock Premium 256kbps AAC audio streams.
+- **🔐 Secure Account Automation:** Seamless Puppeteer-automated authentication for provider account linking.
 
 ---
 
@@ -62,12 +95,12 @@ start.bat
 
 ### 3. Setup & Use
 - Open [http://localhost:5173](http://localhost:5173) in your browser.
-- Link your accounts via the premium navigation pill to unlock high-definition audio and personalized results.
+- Link your accounts via the premium navigation pill to unlock personalized results.
 
 ---
 
 ## 📐 Philosophy
-Omstream is more than just a player; it's an experiment in **Visual Harmony**. By applying the Golden Ratio to UI spacing and typography, we create an interface that feels inherently "correct" to the human eye, mirroring the mathematical beauty found in nature and music.
+Omstream is an experiment in **Visual Harmony**. By applying the Golden Ratio to UI spacing and typography, we create an interface that mirrors the mathematical beauty found in nature and music.
 
 ---
 
