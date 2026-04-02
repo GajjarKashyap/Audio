@@ -52,19 +52,22 @@ sequenceDiagram
     P-->>U: Pipe Audio Buffer (0ms Delay)
 ```
 
-### 3. Source Resolution & Fallback
-The logic behind selecting the "best" playback source for a given track.
+---
 
-```mermaid
-graph LR
-    A[Track Request] --> B{Spotify Match?}
-    B -->|Yes| C[High Quality Source]
-    B -->|No| D{YT Music Match?}
-    D -->|Yes| E[Medium Quality Source]
-    D -->|No| F{Saavn Match?}
-    F -->|Yes| G[Fallback Source]
-    F -->|No| H[Error: Track Not Found]
-```
+## 📁 Project Anatomy
+
+The codebase is intentionally split to maintain a clear **Separation of Concerns**, ensuring that the "Brain" (Backend) and the "Body" (Frontend) can evolve independently.
+
+| Module | Core Logic | Role & Responsibility |
+| :--- | :--- | :--- |
+| <img src="assets/docs/backend.png" width="60"/> | **Backend Core** | The Express-based control center. Handles JWT authentication, session hydration, and high-speed API routing. |
+| <img src="assets/docs/adapters.png" width="60"/> | **Provider Adapters** | A pluggable plugin system. Each service (Spotify, YouTube, Saavn) has a dedicated adapter that normalizes raw data into a unified Omstream schema. |
+| <img src="assets/docs/frontend.png" width="60"/> | **Golden Ratio UI** | A high-performance React application where every margin, padding, and font-size is mathematically derived from the Fibonacci sequence. |
+
+### **⚙️ Why this structure?**
+- **🛡️ Security**: By proxying audio through the backend, client-side browser restrictions (like CORS and Insecure Origin blocks) are bypassed securely.
+- **🔌 Scalability**: Adding a new music provider is as simple as creating one new file in `backend/adapters/`. No frontend changes are required.
+- **⚡ Caching**: The centralized backend allows for a global search cache, reducing provider load and delivering near-instant results for repeat searches.
 
 ---
 
